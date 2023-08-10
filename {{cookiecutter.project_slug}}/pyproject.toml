@@ -8,7 +8,14 @@
 [tool]
 
 [tool.poetry]
+name = "{{ cookiecutter.project_slug }}"
+version = "0.0.0"
+homepage = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug.replace('_', '-') }}"
+description = "{{ cookiecutter.project_short_description }}"
+authors = ["{{ cookiecutter.full_name.replace('\"', '\\\"') }} <{{ cookiecutter.email }}>"]
+readme = "README.md"
 {%- if cookiecutter.open_source_license in license_classifiers %}
+license =  "{{ cookiecutter.open_source_license }}"
 {%- endif %}
 classifiers=[
 {%- if cookiecutter.open_source_license in license_classifiers %}
@@ -27,15 +34,8 @@ include = [
     {%- endif %}
 ]
 {%- if cookiecutter.include_entrypoint %}
-{%- endif %}authors = ["{{ cookiecutter.full_name.replace('\"', '\\\"') }} <{{ cookiecutter.email }}>"]
-description = "{{ cookiecutter.project_short_description }}"
-homepage = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug.replace('_', '-') }}"
-license = "{{ cookiecutter.open_source_license }}"
-name = "{{ cookiecutter.project_slug }}"
 packages = [{include = "{{ cookiecutter.project_slug }}"}]
-readme = "README.md"
-version = "0.0.0"
-
+{%- endif %}
 
 [tool.poetry.dependencies]
 importlib_metadata = "^3.4.0"
@@ -68,20 +68,22 @@ pytest = "^6.0"
 
 {%- if cookiecutter.use_black %}
 [tool.black]
+line-length = 100
 {%- endif %}
-{%- if cookiecutter.use_pylint %}line-length = 100
 
-
+{%- if cookiecutter.use_pylint %}
 [tool.pylint.reports]
-{%- endif %}
-{%- if cookiecutter.use_pytest %}msg-template = "{msg_id}:{line:3d},{column}: {obj}: {msg}"
+msg-template = "{msg_id}:{line:3d},{column}: {obj}: {msg}"
 output-format = "colorized"
 reports = "y"
+{%- endif %}
 
 
+{%- if cookiecutter.use_pytest %}
 [tool.pytest.ini_options]
-{%- endif %}addopts = "--cov={{ cookiecutter.project_slug }} --cov-branch --cov-report term-missing  -vv --color=yes --cov-fail-under 100"
+addopts = "--cov={{ cookiecutter.project_slug }} --cov-branch --cov-report term-missing  -vv --color=yes --cov-fail-under 100"
 python_files = "tests.py test_*.py *_tests.py"
+{%- endif %}
 
 
 [build-system]
