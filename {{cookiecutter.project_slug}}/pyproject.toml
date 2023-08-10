@@ -1,21 +1,14 @@
 {%- set license_classifiers = {
-    'MIT': 'License :: OSI Approved :: MIT License',
-    'BSD-3-Clause': 'License :: OSI Approved :: BSD License',
-    'ISC': 'License :: OSI Approved :: ISC License (ISCL)',
-    'Apache-2.0': 'License :: OSI Approved :: Apache Software License',
-    'GPL-3.0-only': 'License :: OSI Approved :: GNU General Public License v3 (GPLv3)'
+'MIT': 'License :: OSI Approved :: MIT License',
+'BSD-3-Clause': 'License :: OSI Approved :: BSD License',
+'ISC': 'License :: OSI Approved :: ISC License (ISCL)',
+'Apache-2.0': 'License :: OSI Approved :: Apache Software License',
+'GPL-3.0-only': 'License :: OSI Approved :: GNU General Public License v3 (GPLv3)'
 } -%}
 [tool]
 
 [tool.poetry]
-name = "{{ cookiecutter.project_slug }}"
-version = "0.0.0"
-homepage = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug.replace('_', '-') }}"
-description = "{{ cookiecutter.project_short_description }}"
-authors = ["{{ cookiecutter.full_name.replace('\"', '\\\"') }} <{{ cookiecutter.email }}>"]
-readme = "README.md"
 {%- if cookiecutter.open_source_license in license_classifiers %}
-license =  "{{ cookiecutter.open_source_license }}"
 {%- endif %}
 classifiers=[
 {%- if cookiecutter.open_source_license in license_classifiers %}
@@ -33,21 +26,32 @@ include = [
     "{{ cookiecutter.project_slug }}/py.typed"
     {%- endif %}
 ]
+{%- if cookiecutter.include_entrypoint %}
+{%- endif %}authors = ["{{ cookiecutter.full_name.replace('\"', '\\\"') }} <{{ cookiecutter.email }}>"]
+description = "{{ cookiecutter.project_short_description }}"
+homepage = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.project_slug.replace('_', '-') }}"
+license = "{{ cookiecutter.open_source_license }}"
+name = "{{ cookiecutter.project_slug }}"
+packages = [{include = "{{ cookiecutter.project_slug }}"}]
+readme = "README.md"
+version = "0.0.0"
+
 
 [tool.poetry.dependencies]
-python = "^3.7"
 importlib_metadata = "^3.4.0"
+python = "^3.7"
+
+{%- if cookiecutter.include_entrypoint %}
+[tool.poetry.scripts]
+{{ cookiecutter.project_slug }} = "{{ cookiecutter.project_slug }}.{{ cookiecutter.project_slug }}:main"
+{%- endif %}
 
 [tool.poetry.dev-dependencies]
 {% if cookiecutter.use_github_actions_to_publish_docs == 'y' -%}
 mkdocs-material = "^6.1.5"{% endif %}
 {% if cookiecutter.use_pytest == 'y' -%}
-pytest = "^6.0"
 pytest-cov = "^2.10.1"{% endif %}
 {% if cookiecutter.use_flake8 == 'y' -%}
-flake8 = "^4.0.0"
-flake8-docstrings = "1.6.0"
-flake8-import-order = "0.18.1"
 flake8-colors = "0.1.8"{% endif %}
 {% if cookiecutter.use_pylint == 'y' -%}
 pylint = "^2.6.0"{% endif %}
@@ -56,26 +60,30 @@ black = "22.3.0"{% endif %}
 {% if cookiecutter.use_mypy == 'y' -%}
 mypy = "0.960"{% endif %}
 {% if cookiecutter.use_yamllint == "y" -%}
-yamllint = "^1.25.0"{% endif %}
+yamllint = "^1.25.0"{% endif %}flake8 = "^4.0.0"
+flake8-docstrings = "1.6.0"
+flake8-import-order = "0.18.1"
+pytest = "^6.0"
+
 
 {%- if cookiecutter.use_black %}
 [tool.black]
-line-length=100
 {%- endif %}
-{%- if cookiecutter.use_pylint %}
+{%- if cookiecutter.use_pylint %}line-length = 100
+
 
 [tool.pylint.reports]
-output-format="colorized"
-reports="y"
-msg-template="{msg_id}:{line:3d},{column}: {obj}: {msg}"
 {%- endif %}
-{%- if cookiecutter.use_pytest %}
+{%- if cookiecutter.use_pytest %}msg-template = "{msg_id}:{line:3d},{column}: {obj}: {msg}"
+output-format = "colorized"
+reports = "y"
+
 
 [tool.pytest.ini_options]
-addopts = "--cov={{ cookiecutter.project_slug }} --cov-branch --cov-report term-missing  -vv --color=yes --cov-fail-under 100"
+{%- endif %}addopts = "--cov={{ cookiecutter.project_slug }} --cov-branch --cov-report term-missing  -vv --color=yes --cov-fail-under 100"
 python_files = "tests.py test_*.py *_tests.py"
-{%- endif %}
+
 
 [build-system]
-requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+requires = ["poetry>=0.12"]
