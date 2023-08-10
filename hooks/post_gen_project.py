@@ -39,3 +39,7 @@ if __name__ == "__main__":
 
     if "{{ cookiecutter.use_yamllint }}" != "y":
         remove_file("yamllint-config.yml")
+
+    # Entry Point Script
+    if "{{ cookiecutter.include_entrypoint }}" != "y":
+        remove_file( "{{ cookiecutter.project_slug }}/__main__.py" )
